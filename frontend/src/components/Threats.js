@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-// const NavLink = ({ href, children }) => (
-  // <a href={href} className="text-green-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-    {/* {children} */}
-  {/* </a> */}
-// );
+import toast, { Toaster } from 'react-hot-toast';
 
 const ThreatCard = ({ title, children }) => (
   <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
@@ -28,75 +23,84 @@ const Threats = () => {
     '192.0.2.3',
   ]);
 
+  const [intelligenceFeed, setIntelligenceFeed] = useState([
+    'New botnet activity detected from subnet 203.0.113.0/24',
+    'Emerging DDoS technique targeting UDP port 27015',
+    'Increased scanning activity from Chinese IP ranges',
+    'New vulnerability in popular CMS being exploited for DDoS'
+  ]);
+
+  const attackTypes = ['SYN Flood', 'UDP Flood', 'HTTP Flood', 'ICMP Flood', 'DNS Amplification'];
+  const intensities = ['Low', 'Medium', 'High'];
+
   const handleBlock = (id) => {
     const threatToBlock = activeThreats.find(threat => threat.id === id);
     if (threatToBlock) {
       setBlockedIPs([...blockedIPs, threatToBlock.ip]);
       setActiveThreats(activeThreats.filter(threat => threat.id !== id));
+      toast.success(`Blocked ${threatToBlock.ip}`);
     }
   };
 
   const handleUnblock = (ip) => {
     setBlockedIPs(blockedIPs.filter(blockedIP => blockedIP !== ip));
+    toast.success(`Unblocked ${ip}`);
+  };
+
+  const generateIntelligence = () => {
+    toast.loading('Fetching new intelligence feed...');
+
+    setTimeout(() => {
+      const newFeed = [
+        `New ${attackTypes[Math.floor(Math.random() * attackTypes.length)]} detected targeting port ${Math.floor(Math.random() * 65535)}`,
+        `Suspicious traffic pattern from IP ${Array(4).fill().map(() => Math.floor(Math.random() * 256)).join('.')}`,
+        `Large-scale attack attempt on subnet 10.${Math.floor(Math.random()*256)}.0.0/16`,
+        `New botnet behavior observed involving ${Math.floor(Math.random()*5000)} devices`,
+      ];
+      setIntelligenceFeed(newFeed);
+      toast.dismiss();
+      toast.success('New intelligence feed generated');
+    }, 2000);
   };
 
   const handleLogout = () => {
     navigate("/"); 
   };
 
-
   return (
     <div className="min-h-screen bg-gray-900 text-green-400 font-poppins">
-    <nav className="bg-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-green-400">
-                DDoS Defense
-              </h1>
+      <Toaster position="top-right" />
+      <nav className="bg-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <h1 className="text-2xl font-bold text-green-400">DDoS Defense</h1>
+              <div className="ml-10 flex items-center space-x-4">
+                {["Dashboard", "Analysis", "Threats", "Settings"].map((item) => (
+                  <a
+                    key={item}
+                    href={`/${item.toLowerCase()}`}
+                    className="text-green-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    {item}
+                  </a>
+                ))}
+              </div>
             </div>
-            <div className="ml-10 flex items-center space-x-4">
-              <a
-                href="/dashboard"
-                className="text-green-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Dashboard
-              </a>
-              <a
-                href="/analysis"
-                className="text-green-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Analysis
-              </a>
-              <a
-                href="/threats"
-                className="text-green-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Threats
-              </a>
-              <a
-                href="/settings"
-                className="text-green-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Settings
-              </a>
-            </div>
+            <button
+              onClick={handleLogout}
+              className="text-red-300 hover:text-white bg-red-500 hover:bg-red-600 px-3 py-2 rounded-md text-sm font-medium"
+            >
+              Logout
+            </button>
           </div>
-          <button
-            onClick={handleLogout}
-            className="text-red-300 hover:text-white bg-red-500 hover:bg-red-600 px-3 py-2 rounded-md text-sm font-medium"
-          >
-            Logout
-          </button>
         </div>
-      </div>
-    </nav>
+      </nav>
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <h2 className="text-3xl font-bold mb-6">Threats</h2>
-          
+
           <ThreatCard title="Active Threats">
             <div className="overflow-x-auto">
               <table className="min-w-full">
@@ -111,7 +115,7 @@ const Threats = () => {
                 </thead>
                 <tbody>
                   {activeThreats.map((threat) => (
-                    <tr key={threat.id}>
+                    <tr key={threat.id} className="border-b border-gray-700">
                       <td className="px-4 py-2">{threat.ip}</td>
                       <td className="px-4 py-2">{threat.type}</td>
                       <td className="px-4 py-2">{threat.intensity}</td>
@@ -148,12 +152,17 @@ const Threats = () => {
           </ThreatCard>
 
           <ThreatCard title="Threat Intelligence Feed">
-            <ul className="space-y-2">
-              <li>New botnet activity detected from subnet 203.0.113.0/24</li>
-              <li>Emerging DDoS technique targeting UDP port 27015</li>
-              <li>Increased scanning activity from Chinese IP ranges</li>
-              <li>New vulnerability in popular CMS being exploited for DDoS</li>
+            <ul className="space-y-2 mb-4">
+              {intelligenceFeed.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
             </ul>
+            <button
+              onClick={generateIntelligence}
+              className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-500 transition-colors"
+            >
+              Generate New Intelligence
+            </button>
           </ThreatCard>
         </div>
       </main>
@@ -162,4 +171,3 @@ const Threats = () => {
 };
 
 export default Threats;
-
