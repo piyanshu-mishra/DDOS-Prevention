@@ -95,7 +95,7 @@ const Dashboard = () => {
       `IP 198.51.100.17 - Threat Score: ${Math.floor(Math.random() * 40 + 40)}/100 (Medium Risk)`,
       `IP 192.0.2.123 - Threat Score: ${Math.floor(Math.random() * 30)}/100 (Low Risk)`,
     ]);
-  };
+  }; // <-- Fixed missing closing brace for the function
 
   const handleFeedbackSubmit = (e) => {
     e.preventDefault();
@@ -141,7 +141,7 @@ const Dashboard = () => {
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-green-400">DDoS Defense</h1>
               <div className="ml-10 flex items-center space-x-4">
-                {["Dashboard", "Analysis", "Threats", "Settings"].map((item) => (
+                {["Dashboard", "Analysis", "Settings"].map((item) => (
                   <a
                     key={item}
                     href={`/${item.toLowerCase()}`}
@@ -201,75 +201,59 @@ const Dashboard = () => {
               </ul>
             </div>
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              <h3 className="text-xl font-semibold mb-4 text-green-300">Clustering Results</h3>
-              <ul className="space-y-2">
-                <li>Cluster 1: High-volume, low-threat traffic (80% of total)</li>
-                <li>Cluster 2: Low-volume, high-threat traffic (15% of total)</li>
-                <li>Cluster 3: Anomalous behavior requiring investigation (5% of total)</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              <h3 className="text-xl font-semibold mb-4 text-green-300">IP Reputation Scoring</h3>
+              <h3 className="text-xl font-semibold mb-4 text-green-300">IP Reputation</h3>
               <ul className="space-y-2">
                 {ipReputation.map((item, idx) => <li key={idx}>{item}</li>)}
               </ul>
             </div>
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              <h3 className="text-xl font-semibold mb-4 text-green-300">User Feedback</h3>
-              <form onSubmit={handleFeedbackSubmit}>
-                <textarea
-                  className="w-full px-3 py-2 text-gray-300 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
-                  rows="4"
-                  placeholder="Provide feedback on recent detections..."
-                  value={userFeedback}
-                  onChange={(e) => setUserFeedback(e.target.value)}
-                ></textarea>
-                <button
-                  type="submit"
-                  className="mt-2 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-500 transition-colors"
-                >
-                  Submit Feedback
-                </button>
-              </form>
-            </div>
           </div>
 
           <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-green-300">Threat Management</h3>
-            <div className="mb-4">
-              <h4 className="text-lg font-medium mb-2">Blocked IPs</h4>
-              <ul className="space-y-1">
-                {blockedIPs.map((ip, index) => (
-                  <li
-                    key={index}
-                    className="bg-gray-700 px-3 py-2 rounded-md flex items-center justify-between"
-                  >
-                    <span>{ip}</span>
-                    <button
-                      onClick={() => handleUnblockIP(ip)}
-                      className="ml-2 text-sm text-red-400 hover:text-red-300"
-                    >
-                      Unblock
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <form onSubmit={handleBlockIP} className="flex gap-2">
+            <h3 className="text-xl font-semibold mb-4 text-green-300">Block IP Address</h3>
+            <form onSubmit={handleBlockIP}>
               <input
                 type="text"
                 name="ipToBlock"
-                placeholder="Enter IP to block"
-                className="flex-grow px-3 py-2 text-gray-300 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="p-2 bg-gray-700 text-green-400 rounded-lg mb-4 w-full"
+                placeholder="Enter IP address to block"
               />
               <button
                 type="submit"
-                className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-500 transition-colors"
+                className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-500"
               >
                 Block IP
+              </button>
+            </form>
+            <h4 className="mt-4 text-lg font-semibold text-green-300">Blocked IPs</h4>
+            <ul className="space-y-2">
+              {blockedIPs.map((ip, idx) => (
+                <li key={idx} className="flex justify-between items-center">
+                  <span>{ip}</span>
+                  <button
+                    onClick={() => handleUnblockIP(ip)}
+                    className="text-red-500 hover:text-red-400"
+                  >
+                    Unblock
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg mt-8">
+            <h3 className="text-xl font-semibold mb-4 text-green-300">User Feedback</h3>
+            <form onSubmit={handleFeedbackSubmit}>
+              <textarea
+                className="w-full p-2 bg-gray-700 text-green-400 rounded-lg mb-4"
+                value={userFeedback}
+                onChange={(e) => setUserFeedback(e.target.value)}
+                placeholder="Your feedback here..."
+              />
+              <button
+                type="submit"
+                className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-500"
+              >
+                Submit Feedback
               </button>
             </form>
           </div>

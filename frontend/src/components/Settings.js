@@ -61,12 +61,6 @@ const Settings = () => {
                   Analysis
                 </a>
                 <a
-                  href="/threats"
-                  className="text-green-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Threats
-                </a>
-                <a
                   href="/settings"
                   className="text-green-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                 >
