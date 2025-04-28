@@ -5,7 +5,6 @@ import SignUpPage from './components/SignUpPage';
 import Dashboard from './components/Dashboard';
 import Analysis from'./components/Analysis'
 import Settings from'./components/Settings'
-import Threats from'./components/Threats'
 
 const App = () => {
   return (
@@ -16,7 +15,6 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/analysis" element={<Analysis />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/threats" element={<Threats />} />
       </Routes>
     </Router>
   );
